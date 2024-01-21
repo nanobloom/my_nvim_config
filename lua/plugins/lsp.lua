@@ -14,10 +14,6 @@ return {
 				ensure_installed = {
 					"lua_ls",
 					"pyright",
--- For some reason these cannot be added to ensure_installed and have to be installed manually					
---					"black",
---					"mypy",
---					"ruff",
 				},
 			})
 		end,

@@ -15,6 +15,33 @@ return {
 			local cmp = require("cmp")
 			require("luasnip.loaders.from_vscode").lazy_load()
 
+			local function make_cmp_mapping(keybind, cmp_method)
+				return function(fallback)
+					if cmp.visible() then
+						cmp_method()
+					else
+						fallback()
+					end
+				end
+			end
+
+			local custom_mappings = {
+				["<C-k>"] = make_cmp_mapping("<C-k>", cmp.select_prev_item),
+				["<C-j>"] = make_cmp_mapping("<C-j>", cmp.select_next_item),
+				["<C-e>"] = make_cmp_mapping("<C-e>", cmp.abort),
+				["<C-d>"] = make_cmp_mapping("<C-d>", function()
+					cmp.scroll_docs(4)
+				end),
+				["<C-u>"] = make_cmp_mapping("<C-u>", function()
+					cmp.scroll_docs(-4)
+				end),
+				["<CR>"] = make_cmp_mapping("<CR>", function()
+					cmp.confirm({ select = true })
+				end),
+			}
+
+			local mapping = cmp.mapping.preset.insert(custom_mappings)
+
 			cmp.setup({
 				snippet = {
 					expand = function(args)
@@ -25,50 +52,7 @@ return {
 					completion = cmp.config.window.bordered(),
 					documentation = cmp.config.window.bordered(),
 				},
-				mapping = cmp.mapping.preset.insert({
-					["<C-k>"] = function(fallback)
-						if cmp.visible() then
-							cmp.select_prev_item()
-						else
-							fallback()
-						end
-					end,
-					["<C-j>"] = function(fallback)
-						if cmp.visible() then
-							cmp.select_next_item()
-						else
-							fallback()
-						end
-					end,
-					["<C-e>"] = function(fallback)
-						if cmp.visible() then
-							cmp.abort()
-						else
-							fallback()
-						end
-					end,
-					["<C-d>"] = function(fallback)
-						if cmp.visible() then
-							cmp.scroll_docs(4)
-						else
-							fallback()
-						end
-					end,
-					["<C-u>"] = function(fallback)
-						if cmp.visible() then
-							cmp.scroll_docs(-4)
-						else
-							fallback()
-						end
-					end,
-					["<CR>"] = function(fallback)
-						if cmp.visible() then
-							cmp.confirm({ select = true })
-						else
-							fallback()
-						end
-					end,
-				}),
+				mapping = mapping,
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },

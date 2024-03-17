@@ -5,7 +5,46 @@ return {
 		config = function()
 			local dap = require("dap")
 			local dapui = require("dapui")
-			dapui.setup()
+			dapui.setup({
+				layouts = {
+					{
+						elements = {
+							{
+								id = "scopes",
+								size = 0.70,
+							},
+							{
+								id = "breakpoints",
+								size = 0.10,
+							},
+							{
+								id = "stacks",
+								size = 0.10,
+							},
+							{
+								id = "watches",
+								size = 0.10,
+							},
+						},
+						position = "left",
+						size = 120,
+					},
+					{
+						elements = {
+							{
+								id = "repl",
+								size = 0.5,
+							},
+							{
+								id = "console",
+								size = 0.5,
+							},
+						},
+						position = "bottom",
+						size = 10,
+					},
+				},
+			})
 			dap.listeners.after.event_initialized["dapui_config"] = function()
 				dapui.open()
 			end
@@ -33,10 +72,23 @@ return {
 			"mfussenegger/nvim-dap",
 			"rcarriga/nvim-dap-ui",
 		},
+		keys = {
+			{
+				"<leader>dPt",
+				function()
+					require("dap-python").test_method()
+				end,
+				desc = "Debug Method",
+				ft = "python",
+			},
+		},
 		config = function()
+			require("dap-python").resolve_python = function()
+				return "/usr/bin/python3"
+			end
 			local path = "~/.local/share/nvim/mason/packages/debugpy/venv/bin/python"
 			require("dap-python").setup(path)
-			vim.keymap.set("n", "<Leader>dpr", ":lua require('dap-python').test_method()<CR>")
+			-- vim.keymap.set("n", "<Leader>dpr", ":lua require('dap-python').test_method()<CR>")
 		end,
 	},
 }
